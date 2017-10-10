@@ -13,9 +13,10 @@ Measures based on noise measurements
 
 - :py:func:`~mriqc.qc.anatomical.cjv` -- **coefficient of joint variation**
   (:abbr:`CJV (coefficient of joint variation)`):
-  The ``cjv`` of GM and WM was proposed as objective function by [Ganzetti2016]_ for
-  the optimization of :abbr:`INU (intensity non-uniformity)` correction algorithms.
-  Higher values are related to the presence of heavy head motion and large
+  The ``cjv`` of GM and WM was proposed as objective function by
+  [Ganzetti2016]_ for the optimization of
+  :abbr:`INU (intensity non-uniformity)` correction algorithms. Higher values
+  are related to the presence of heavy head motion and large
   :abbr:`INU (intensity non-uniformity)` artifacts. Lower values are better.
 
 .. _iqms_cnr:
@@ -65,24 +66,25 @@ Measures based on information theory
 
 - :py:func:`~mriqc.qc.anatomical.fber`:
   The :abbr:`FBER (Foreground-Background Energy Ratio)` [Shehzad2015]_,
-  defined as the mean energy of image values within the head relative to outside the head [QAP-measures]_.
-  Higher values are better.
+  defined as the mean energy of image values within the head relative to
+  outside the head [QAP-measures]_. Higher values are better.
 
 Measures targeting specific artifacts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. _iqms_inu:
 
-- **inu_\*** (*nipype interface to N4ITK*): summary statistics (max, min and median)
-  of the :abbr:`INU (intensity non-uniformity)` field as extracted by the N4ITK algorithm
-  [Tustison2010]_. Values closer to 1.0 are better.
+- **inu_\*** (*nipype interface to N4ITK*): summary statistics (max, min and
+  median) of the :abbr:`INU (intensity non-uniformity)` field as extracted by
+  the N4ITK algorithm [Tustison2010]_. Values closer to 1.0 are better.
 
 .. _iqms_qi:
 
 - :py:func:`~mriqc.qc.anatomical.art_qi1`:
   Detect artifacts in the image using the method described in [Mortamet2009]_.
-  The :abbr:`QI1 (quality index 1)` is the proportion of voxels with intensity corrupted by artifacts
-  normalized by the number of voxels in the background. Lower values are better.
+  The :abbr:`QI1 (quality index 1)` is the proportion of voxels with intensity
+  corrupted by artifacts normalized by the number of voxels in the background.
+  Lower values are better.
 
   .. figure:: ../resources/mortamet-mrm2009.png
 
@@ -103,85 +105,100 @@ Other measures
 
 .. _iqms_fwhm:
 
-- **fwhm** (*nipype interface to AFNI*): The :abbr:`FWHM (full-width half maximum)` of
-  the spatial distribution of the image intensity values in units of voxels [Forman1995]_.
-  Lower values are better. Uses the gaussian width estimator filter implemented in
-  AFNI's ``3dFWHMx``:
+- **fwhm** (*nipype interface to AFNI*): The
+  :abbr:`FWHM (full-width half maximum)` of the spatial distribution of the
+  image intensity values in units of voxels [Forman1995]_. Lower values are
+  better. Uses the gaussian width estimator filter implemented in AFNI's
+  ``3dFWHMx``:
 
   .. math ::
 
-      \text{FWHM} = \sqrt{-{\left[4 \ln{(1-\frac{\sigma^2_{X^m_{i+1,j}-X^m_{i,j}}}{2\sigma^2_{X^m_{i,j}}}})\right]}^{-1}}
+      \text{FWHM} =
+      \sqrt{-{\left[4\ln\left(
+      1-\frac{\sigma^2_{X^m_{i+1,j}-X^m_{i,j}}}{2\sigma^2_{X^m_{i,j}}}
+      \right)\right]}^{-1}}
 
 .. _iqms_icvs:
 
 - :py:func:`~mriqc.qc.anatomical.volume_fractions` (**icvs_\***):
   the
-  :abbr:`ICV (intracranial volume)` fractions of :abbr:`CSF (cerebrospinal fluid)`,
-  :abbr:`GM (gray-matter)` and :abbr:`WM (white-matter)`. They should move within
-  a normative range.
+  :abbr:`ICV (intracranial volume)` fractions of
+  :abbr:`CSF (cerebrospinal fluid)`, :abbr:`GM (gray-matter)` and
+  :abbr:`WM (white-matter)`. They should move within a normative range.
 
 .. _iqms_rpve:
 
 - :py:func:`~mriqc.qc.anatomical.rpve` (**rpve_\***): the
-  :abbr:`rPVe (residual partial voluming error)` of :abbr:`CSF (cerebrospinal fluid)`,
-  :abbr:`GM (gray-matter)` and :abbr:`WM (white-matter)`. Lower values are better.
+  :abbr:`rPVe (residual partial voluming error)` of
+  :abbr:`CSF (cerebrospinal fluid)`, :abbr:`GM (gray-matter)` and
+  :abbr:`WM (white-matter)`. Lower values are better.
 
 .. _iqms_summary:
 
 - :py:func:`~mriqc.qc.anatomical.summary_stats` (**summary_\*_\***):
-  Mean, standard deviation, 5% percentile and 95% percentile of the distribution
-  of background, :abbr:`CSF (cerebrospinal fluid)`, :abbr:`GM (gray-matter)` and
-  :abbr:`WM (white-matter)`.
+  Mean, standard deviation, 5% percentile and 95% percentile of the
+  distribution of background, :abbr:`CSF (cerebrospinal fluid)`,
+  :abbr:`GM (gray-matter)` and :abbr:`WM (white-matter)`.
 
 .. _iqms_tpm:
 
 - **overlap_\*_\***:
-  The overlap of the :abbr:`TPMs (tissue probability maps)` estimated from the image and
-  the corresponding maps from the ICBM nonlinear-asymmetric 2009c template.
+  The overlap of the :abbr:`TPMs (tissue probability maps)` estimated from the
+  image and the corresponding maps from the ICBM nonlinear-asymmetric 2009c
+  template. TEST TO SEE
 
   .. math ::
 
-      \text{JI}^k = \frac{\sum_i \min{(\text{TPM}^k_i, \text{MNI}^k_i)}}{\sum_i \max{(\text{TPM}^k_i, \text{MNI}^k_i)}}
-
+      \text{JI}^k =
+      {
+      \frac{\sum_i \min{(\text{TPM}^k_i, \text{MNI}^k_i)}}
+      {\sum_i \max{(\text{TPM}^k_i, \text{MNI}^k_i)}}
+      }
 
 .. topic:: References
 
-  .. [Dietrich2007] Dietrich et al., *Measurement of SNRs in MR images: influence
-    of multichannel coils, parallel imaging and reconstruction filters*, JMRI 26(2):375--385.
-    2007. doi:`10.1002/jmri.20969 <http://dx.doi.org/10.1002/jmri.20969>`_.
+  .. [Dietrich2007] Dietrich et al., *Measurement of SNRs in MR images:
+    influence of multichannel coils, parallel imaging and reconstruction
+    filters*, JMRI 26(2):375--385. 2007.
+    doi:`10.1002/jmri.20969 <http://dx.doi.org/10.1002/jmri.20969>`_.
 
-  .. [Ganzetti2016] Ganzetti et al., *Intensity inhomogeneity correction of structural MR images:
-    a data-driven approach to define input algorithm parameters*. Front Neuroinform 10:10. 2016.
+  .. [Ganzetti2016] Ganzetti et al., *Intensity inhomogeneity correction of
+    structural MR images: a data-driven approach to define input algorithm
+    parameters*. Front Neuroinform 10:10. 2016.
     doi:`10.3389/finf.201600010 <http://dx.doi.org/10.3389/finf.201600010>`_.
 
-  .. [Magnota2006] Magnotta, VA., & Friedman, L., *Measurement of signal-to-noise
-    and contrast-to-noise in the fBIRN multicenter imaging study*.
-    J Dig Imag 19(2):140-147, 2006. doi:`10.1007/s10278-006-0264-x
+  .. [Magnota2006] Magnotta, VA., & Friedman, L., *Measurement of
+    signal-to-noise and contrast-to-noise in the fBIRN multicenter imaging
+    study*. J Dig Imag 19(2):140-147, 2006. doi:`10.1007/s10278-006-0264-x
     <http://dx.doi.org/10.1007/s10278-006-0264-x>`_.
 
   .. [Mortamet2009] Mortamet B et al., *Automatic quality assessment in
     structural brain magnetic resonance imaging*, Mag Res Med 62(2):365-372,
     2009. doi:`10.1002/mrm.21992 <http://dx.doi.org/10.1002/mrm.21992>`_.
 
-  .. [Tustison2010] Tustison NJ et al., *N4ITK: improved N3 bias correction*, IEEE Trans Med Imag, 29(6):1310-20,
-    2010. doi:`10.1109/TMI.2010.2046908 <http://dx.doi.org/10.1109/TMI.2010.2046908>`_.
+  .. [Tustison2010] Tustison NJ et al., *N4ITK: improved N3 bias correction*,
+    IEEE Trans Med Imag, 29(6):1310-20, 2010. doi:`10.1109/TMI.2010.2046908
+    <http://dx.doi.org/10.1109/TMI.2010.2046908>`_.
 
   .. [Shehzad2015] Shehzad Z et al., *The Preprocessed Connectomes Project
-     Quality Assessment Protocol - a resource for measuring the quality of MRI data*,
-     Front. Neurosci. Conference Abstract: Neuroinformatics 2015.
-     doi: `10.3389/conf.fnins.2015.91.00047 <https://doi.org/10.3389/conf.fnins.2015.91.00047>`_.
+    Quality Assessment Protocol - a resource for measuring the quality of
+    MRI data*, Front. Neurosci. Conference Abstract: Neuroinformatics 2015.
+    doi: `10.3389/conf.fnins.2015.91.00047
+    <https://doi.org/10.3389/conf.fnins.2015.91.00047>`_.
 
-  .. [Forman1995] Forman SD et a., *Improved assessment of significant activation in functional
-     magnetic resonance imaging (fMRI): use of a cluster-size threshold*,
-     Magn. Reson. Med. 33 (5), 636–647, 1995.
-     doi:`10.1016/j.neuroimage.2006.03.062 <http://dx.doi.org/10.1016/j.neuroimage.2006.03.062>`_.
+  .. [Forman1995] Forman SD et a., *Improved assessment of significant
+    activation in functional magnetic resonance imaging (fMRI): use of a
+    cluster-size threshold*, Magn. Reson. Med. 33 (5), 636–647, 1995.
+    doi:`10.1016/j.neuroimage.2006.03.062
+    <http://dx.doi.org/10.1016/j.neuroimage.2006.03.062>`_.
 
 
 mriqc.qc.anatomical module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 """
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import os.path as op
 from sys import version_info
 import json
@@ -196,9 +213,10 @@ from io import open  # pylint: disable=W0622
 from builtins import zip, range, str, bytes  # pylint: disable=W0622
 from six import string_types
 
-DIETRICH_FACTOR = 1.0 / sqrt(2/(4 - pi))
+DIETRICH_FACTOR = 1.0 / sqrt(2 / (4 - pi))
 FSL_FAST_LABELS = {'csf': 1, 'gm': 2, 'wm': 3, 'bg': 0}
 PY3 = version_info[0] > 2
+
 
 def snr(mu_fg, sigma_fg, n):
     r"""
@@ -213,35 +231,33 @@ def snr(mu_fg, sigma_fg, n):
     where :math:`\mu_F` is the mean intensity of the foreground and
     :math:`\sigma_F` is the standard deviation of the same region.
 
-    :param numpy.ndarray img: input data
-    :param numpy.ndarray fgmask: input foreground mask or segmentation
-    :param bool erode: erode masks before computations.
-    :param str fglabel: foreground label in the segmentation data.
+    :param float mu_fg: mean of foreground.
+    :param float sigma_fg: standard deviation of foreground.
+    :param int n: number of voxels in foreground mask.
 
-    :return: the computed SNR for the foreground segmentation
+    :return: the computed SNR
 
     """
     return float(mu_fg / (sigma_fg * sqrt(n / (n - 1))))
+
 
 def snr_dietrich(mu_fg, sigma_air):
     r"""
     Calculate the :abbr:`SNR (Signal-to-Noise Ratio)`.
 
-    This must be an air mask around the head, and it should not contain artifacts.
-    The computation is done following the eq. A.12 of [Dietrich2007]_, which
-    includes a correction factor in the estimation of the standard deviation of
-    air and its Rayleigh distribution:
+    This must be an air mask around the head, and it should not contain
+    artifacts.bThe computation is done following the eq. A.12 of
+    [Dietrich2007]_, which includes a correction factor in the estimation of
+    the standard deviation of air and its Rayleigh distribution:
 
     .. math::
 
         \text{SNR} = \frac{\mu_F}{\sqrt{\frac{2}{4-\pi}}\,\sigma_\text{air}}.
 
 
-    :param numpy.ndarray img: input data
-    :param numpy.ndarray smask: input foreground mask or segmentation
-    :param numpy.ndarray airmask: input background mask or segmentation
-    :param bool erode: erode masks before computations.
-    :param str fglabel: foreground label in the segmentation data.
+    :param float mu_fg: mean of foreground.
+    :param float sigma_air: standard deviation of the air surrounding the head
+        ("hat" mask).
 
     :return: the computed SNR for the foreground segmentation
 
@@ -253,6 +269,7 @@ def snr_dietrich(mu_fg, sigma_air):
 
     return float(DIETRICH_FACTOR * mu_fg / sigma_air)
 
+
 def cnr(mu_wm, mu_gm, sigma_air):
     r"""
     Calculate the :abbr:`CNR (Contrast-to-Noise Ratio)` [Magnota2006]_.
@@ -263,12 +280,15 @@ def cnr(mu_wm, mu_gm, sigma_air):
         \text{CNR} = \frac{|\mu_\text{GM} - \mu_\text{WM} |}{\sqrt{\sigma_B^2 +
         \sigma_\text{WM}^2 + \sigma_\text{GM}^2}},
 
-    where :math:`\sigma_B` is the standard deviation of the noise distribution within
-    the air (background) mask.
+    where :math:`\sigma_B` is the standard deviation of the noise distribution
+    within the air (background) mask.
 
 
-    :param numpy.ndarray img: input data
-    :param numpy.ndarray seg: input segmentation
+    :param float mu_wm: mean of signal within white-matter mask.
+    :param float mu_gm: mean of signal within gray-matter mask.
+    :param float sigma_air: standard deviation of the air surrounding the head
+        ("hat" mask).
+
     :return: the computed CNR
 
     """
@@ -285,13 +305,19 @@ def cjv(mu_wm, mu_gm, sigma_wm, sigma_gm):
 
     .. math::
 
-        \text{CJV} = \frac{\sigma_\text{WM} + \sigma_\text{GM}}{|\mu_\text{WM} - \mu_\text{GM}|}.
+        \text{CJV} =
+        {
+        \frac{\sigma_\text{WM} + \sigma_\text{GM}}
+        {|\mu_\text{WM} - \mu_\text{GM}|}}
 
-    :param numpy.ndarray img: the input data
-    :param numpy.ndarray wmmask: the white matter mask
-    :param numpy.ndarray gmmask: the gray matter mask
+    :param float mu_wm: mean of signal within white-matter mask.
+    :param float mu_gm: mean of signal within gray-matter mask.
+    :param float sigma_wm: standard deviation of signal within white-matter
+        mask.
+    :param float sigma_gm: standard deviation of signal within gray-matter
+        mask.
+
     :return: the computed CJV
-
 
     """
     return float((sigma_wm + sigma_gm) / abs(mu_wm - mu_gm))
@@ -299,9 +325,9 @@ def cjv(mu_wm, mu_gm, sigma_wm, sigma_gm):
 
 def fber(img, headmask, rotmask=None):
     r"""
-    Calculate the :abbr:`FBER (Foreground-Background Energy Ratio)` [Shehzad2015]_,
-    defined as the mean energy of image values within the head relative
-    to outside the head. Higher values are better.
+    Calculate the :abbr:`FBER (Foreground-Background Energy Ratio)`
+    [Shehzad2015]_, defined as the mean energy of image values within the head
+    relative to outside the head. Higher values are better.
 
     .. math::
 
@@ -309,7 +335,10 @@ def fber(img, headmask, rotmask=None):
 
 
     :param numpy.ndarray img: input data
-    :param numpy.ndarray seg: input segmentation
+    :param numpy.ndarray headmask: a mask of the head (including skull, skin,
+        etc.)
+    :param numpy.ndarray rotmask: a mask of empty voxels inserted after a
+        rotation of data
 
     """
 
@@ -323,7 +352,6 @@ def fber(img, headmask, rotmask=None):
     if bg_mu < 1.0e-3:
         return 0
     return float(fg_mu / bg_mu)
-
 
 
 def efc(img, framemask=None):
@@ -348,6 +376,8 @@ def efc(img, framemask=None):
         \text{EFC} = \left( \frac{N}{\sqrt{N}} \, \log{\sqrt{N}^{-1}} \right) \text{E}
 
     :param numpy.ndarray img: input data
+    :param numpy.ndarray framemask: a mask of empty voxels inserted after a
+        rotation of data
 
     """
 
@@ -637,4 +667,3 @@ def _prepare_mask(mask, label, erode=True):
         fgmask = nd.binary_opening(fgmask, structure=struc).astype(np.uint8)
 
     return fgmask
-
