@@ -363,7 +363,8 @@ def efc(img, framemask=None):
 
     .. math::
 
-        \text{E} = - \sum_{j=1}^N \frac{x_j}{x_\text{max}} \ln \left[\frac{x_j}{x_\text{max}}\right]
+        \text{E} = - \sum_{j=1}^N
+        \frac{x_j}{x_\text{max}} \ln \left[\frac{x_j}{x_\text{max}}\right]
 
     with :math:`x_\text{max} = \sqrt{\sum_{j=1}^N x^2_j}`.
 
@@ -373,7 +374,8 @@ def efc(img, framemask=None):
 
     .. math::
 
-        \text{EFC} = \left( \frac{N}{\sqrt{N}} \, \log{\sqrt{N}^{-1}} \right) \text{E}
+        \text{EFC} = \left( \frac{N}{\sqrt{N}} \,
+        \log{\sqrt{N}^{-1}} \right) \text{E}
 
     :param numpy.ndarray img: input data
     :param numpy.ndarray framemask: a mask of empty voxels inserted after a
@@ -388,14 +390,15 @@ def efc(img, framemask=None):
     # Calculate the maximum value of the EFC (which occurs any time all
     # voxels have the same value)
     efc_max = 1.0 * n_vox * (1.0 / np.sqrt(n_vox)) * \
-                np.log(1.0 / np.sqrt(n_vox))
+        np.log(1.0 / np.sqrt(n_vox))
 
     # Calculate the total image energy
     b_max = np.sqrt((img[framemask == 0]**2).sum())
 
     # Calculate EFC (add 1e-16 to the image data to keep log happy)
-    return float((1.0 / efc_max) * np.sum((img[framemask == 0] / b_max) * np.log(
-        (img[framemask == 0] + 1e-16) / b_max)))
+    return float((1.0 / efc_max) * np.sum((img[framemask == 0] / b_max) *
+                                          np.log((img[framemask == 0]
+                                                 + 1e-16) / b_max)))
 
 
 def wm2max(img, mu_wm):
@@ -412,11 +415,13 @@ def wm2max(img, mu_wm):
     """
     return float(mu_wm / np.percentile(img.reshape(-1), 99.95))
 
+
 def art_qi1(airmask, artmask):
     r"""
-    Detect artifacts in the image using the method described in [Mortamet2009]_.
-    Caculates :math:`\text{QI}_1`, as the proportion of voxels with intensity corrupted by artifacts
-    normalized by the number of voxels in the background:
+    Detect artifacts in the image using the method described in
+    [Mortamet2009]_. Caculates :math:`\text{QI}_1`, as the proportion of voxels
+    with intensity corrupted by artifacts normalized by the number of voxels in
+    the background:
 
     .. math ::
 
@@ -444,7 +449,9 @@ def art_qi2(img, airmask, ncoils=12, erodemask=True,
 
     .. math ::
 
-        \chi^2_n = \frac{2}{(\sigma \sqrt{2})^{2n} \, (n - 1)!}x^{2n - 1}\, e^{-\frac{x}{2}}
+        \chi^2_n =
+        \frac{2}{(\sigma \sqrt{2})^{2n} \,
+        (n - 1)!}x^{2n - 1}\, e^{-\frac{x}{2}}
 
     where :math:`n` is the number of coil elements.
 
@@ -471,7 +478,8 @@ def art_qi2(img, airmask, ncoils=12, erodemask=True,
     dmax = np.percentile(data[data > 0], 99.9)
     hist, bin_edges = np.histogram(data[data > 0], density=True,
                                    range=(0.0, dmax), bins='doane')
-    bin_centers = [float(np.mean(bin_edges[i:i+1])) for i in range(len(bin_edges)-1)]
+    bin_centers = [float(np.mean(bin_edges[i:i+1]))
+                   for i in range(len(bin_edges)-1)]
     max_pos = np.argmax(hist)
     json_out = {
         'x': bin_centers,
@@ -480,7 +488,8 @@ def art_qi2(img, airmask, ncoils=12, erodemask=True,
 
     # Fit central chi distribution
     param = chi.fit(data[data > 0], 2*ncoils, loc=bin_centers[max_pos])
-    pdf_fitted = chi.pdf(bin_centers, *param[:-2], loc=param[-2], scale=param[-1])
+    pdf_fitted = chi.pdf(bin_centers, *param[:-2], loc=param[-2],
+                         scale=param[-1])
     json_out['y_hat'] = [float(v) for v in pdf_fitted]
 
     # Find t2 (intensity at half width, right side)
@@ -494,7 +503,8 @@ def art_qi2(img, airmask, ncoils=12, erodemask=True,
     json_out['x_cutoff'] = float(bin_centers[t2idx])
 
     # Compute goodness-of-fit (gof)
-    gof = float(np.abs(hist[t2idx:] - pdf_fitted[t2idx:]).sum() / len(pdf_fitted[t2idx:]))
+    gof = float(np.abs(hist[t2idx:] - pdf_fitted[t2idx:]).sum() /
+                len(pdf_fitted[t2idx:]))
 
     # Clip values for sanity
     gof = 1.0 if gof > 1.0 else gof
@@ -514,7 +524,8 @@ def volume_fraction(pvms):
 
     .. math ::
 
-        \text{ICV}^k = \frac{\sum_i p^k_i}{\sum\limits_{x \in X_\text{brain}} 1}
+        \text{ICV}^k =
+        \frac{\sum_i p^k_i}{\sum\limits_{x \in X_\text{brain}} 1}
 
     :param list pvms: list of :code:`numpy.ndarray` of partial volume maps.
 
@@ -531,6 +542,7 @@ def volume_fraction(pvms):
         tissue_vfs[k] /= total
     return {k: float(v) for k, v in list(tissue_vfs.items())}
 
+
 def rpve(pvms, seg):
     """
     Computes the :abbr:`rPVe (residual partial voluming error)`
@@ -539,7 +551,8 @@ def rpve(pvms, seg):
     .. math ::
 
         \\text{rPVE}^k = \\frac{1}{N} \\left[ \\sum\\limits_{p^k_i \
-\\in [0.5, P_{98}]} p^k_i + \\sum\\limits_{p^k_i \\in [P_{2}, 0.5)} 1 - p^k_i \\right]
+        \\in [0.5, P_{98}]} p^k_i +
+        \\sum\\limits_{p^k_i \\in [P_{2}, 0.5)} 1 - p^k_i \\right]
 
     """
 
@@ -555,8 +568,10 @@ def rpve(pvms, seg):
         loth = np.percentile(pvmap[pvmap > 0], 2)
         pvmap[pvmap < loth] = 0
         pvmap[pvmap > upth] = 0
-        pvfs[k] = (pvmap[pvmap > 0.5].sum() + (1.0 - pvmap[pvmap <= 0.5]).sum()) / totalvol
+        pvfs[k] = (pvmap[pvmap > 0.5].sum() +
+                   (1.0 - pvmap[pvmap <= 0.5]).sum()) / totalvol
     return {k: float(v) for k, v in list(pvfs.items())}
+
 
 def summary_stats(img, pvms, airmask=None, erode=True):
     r"""
@@ -609,8 +624,8 @@ def summary_stats(img, pvms, airmask=None, erode=True):
 
         nvox = float(mask.sum())
         if nvox < 1e3:
-            MRIQC_LOG.warn('calculating summary stats of label "%s" in a very small '
-                           'mask (%d voxels)', k, int(nvox))
+            MRIQC_LOG.warn('calculating summary stats of label "%s" in a very '
+                           'small mask (%d voxels)', k, int(nvox))
             if k == 'bg':
                 continue
 
@@ -639,13 +654,15 @@ def summary_stats(img, pvms, airmask=None, erode=True):
             'n': sum(val['n'] for _, val in list(output.items()))
         }
 
-    if 'bg' in output and output['bg']['mad'] == 0.0 and output['bg']['stdv'] > 1.0:
+    if ('bg' in output and
+            output['bg']['mad'] == 0.0 and
+            output['bg']['stdv'] > 1.0):
         MRIQC_LOG.warn('estimated MAD in the background was too small ('
                        'MAD=%f)', output['bg']['mad'])
         output['bg']['mad'] = output['bg']['stdv'] / DIETRICH_FACTOR
 
-
     return output
+
 
 def _prepare_mask(mask, label, erode=True):
     fgmask = mask.copy()
