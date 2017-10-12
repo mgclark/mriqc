@@ -87,6 +87,11 @@ class PlotBaseInputSpec(BaseInterfaceInputSpec):
 class PlotMosaicInputSpec(PlotBaseInputSpec):
     bbox_mask_file = File(exists=True, desc='brain mask')
     only_noise = traits.Bool(False, desc='plot only noise')
+    plot_sagittal = traits.Bool(
+        True, usedefault=True, desc='include sagittal slices')
+    skip_slices = traits.Int(
+        2, usedefault=True, desc='number of slices to skip; default 2')
+    ncols = traits.Int(8, usedefault=True, desc='number of image columns')
 
 
 class PlotMosaicOutputSpec(TraitedSpec):
@@ -115,6 +120,9 @@ class PlotMosaic(SimpleInterface):
             out_file=self.inputs.out_file,
             title=title,
             only_plot_noise=self.inputs.only_noise,
+            plot_sagittal=self.inputs.plot_sagittal,
+            skip_slices=self.inputs.skip_slices,
+            ncols=self.inputs.ncols,
             bbox_mask_file=mask,
             cmap=self.inputs.cmap,
             annotate=self.inputs.annotate)
@@ -154,5 +162,3 @@ class PlotSpikes(SimpleInterface):
             self.inputs.in_file, self.inputs.in_fft, spikes_list,
             out_file=out_file)
         return runtime
-
-

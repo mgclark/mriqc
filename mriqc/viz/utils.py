@@ -183,10 +183,10 @@ def plot_spikes(in_file, in_fft, spikes_list, cols=3,
     return out_file
 
 
-def plot_mosaic(img, out_file=None, ncols=8, title=None, overlay_mask=None,
+def plot_mosaic(img, out_file=None, ncols=None, title=None, overlay_mask=None,
                 bbox_mask_file=None, only_plot_noise=False, annotate=True,
-                vmin=None, vmax=None, cmap='Greys_r', plot_sagittal=True,
-                fig=None, zmax=128):
+                vmin=None, vmax=None, cmap='Greys_r', plot_sagittal=None,
+                fig=None, zmax=128, skip_slices=None):
 
     if isinstance(img, (str, bytes)):
         nii = nb.as_closest_canonical(nb.load(img))
@@ -214,20 +214,24 @@ def plot_mosaic(img, out_file=None, ncols=8, title=None, overlay_mask=None,
     z_vals = np.array(list(range(0, img_data.shape[2])))
 
     # Reduce the number of slices shown
+    print("at least hit the code block...?")
     if len(z_vals) > zmax:
         rem = 15
         # Crop inferior and posterior
         if not bbox_mask_file:
             # img_data = img_data[..., rem:-rem]
             z_vals = z_vals[rem:-rem]
+            print("HIT bbox")
         else:
             # img_data = img_data[..., 2 * rem:]
             z_vals = z_vals[2 * rem:]
+            print("HIT else")
 
     while len(z_vals) > zmax:
         # Discard one every two slices
         # img_data = img_data[..., ::2]
-        z_vals = z_vals[::2]
+        z_vals = z_vals[::skip_slices]#2]
+        print("HIT while")
 
 
     n_images = len(z_vals)
