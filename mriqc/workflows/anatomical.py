@@ -308,6 +308,7 @@ def compute_iqms(settings, modality='T1w', name='ComputeIQMs'):
     ])
     return workflow
 
+
 def individual_reports(settings, name='ReportsWorkflow'):
     """
     Encapsulates nodes writing plots
@@ -352,7 +353,8 @@ def individual_reports(settings, name='ReportsWorkflow'):
 
     # Link images that should be reported
     dsplots = pe.Node(nio.DataSink(
-        base_directory=settings['output_dir'], parameterization=False), name='dsplots')
+        base_directory=settings['output_dir'], parameterization=False),
+        name='dsplots')
     dsplots.inputs.container = 'reports'
 
     workflow.connect([
@@ -371,8 +373,10 @@ def individual_reports(settings, name='ReportsWorkflow'):
 
     from ..interfaces.viz import PlotContours
     from ..viz.utils import plot_bg_dist
-    plot_bgdist = pe.Node(niu.Function(input_names=['in_file'], output_names=['out_file'],
-                          function=plot_bg_dist), name='PlotBackground')
+    plot_bgdist = pe.Node(niu.Function(input_names=['in_file'],
+                                       output_names=['out_file'],
+                                       function=plot_bg_dist),
+                          name='PlotBackground')
 
     plot_segm = pe.Node(PlotContours(
         display_mode='z', levels=[.5, 1.5, 2.5], cut_coords=10,
@@ -412,6 +416,7 @@ def individual_reports(settings, name='ReportsWorkflow'):
         (plot_bgdist, mplots, [('out_file', 'in%d' % (pages + 7))])
     ])
     return workflow
+
 
 def headmsk_wf(name='HeadMaskWorkflow', use_bet=True):
     """
