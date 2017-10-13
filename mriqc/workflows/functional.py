@@ -379,7 +379,8 @@ def individual_reports(settings, name='ReportsWorkflow'):
         cmap='viridis'), name='PlotMosaicSD')
 
     mplots = pe.Node(niu.Merge(pages + extra_pages
-                               + int(settings.get('fft_spikes_detector', False))
+                               + int(settings.get('fft_spikes_detector',
+                                                  False))
                                + int(settings.get('ica', False))),
                      name='MergePlots')
     rnode = pe.Node(niu.Function(
@@ -388,7 +389,8 @@ def individual_reports(settings, name='ReportsWorkflow'):
 
     # Link images that should be reported
     dsplots = pe.Node(nio.DataSink(
-        base_directory=settings['output_dir'], parameterization=False), name='dsplots')
+        base_directory=settings['output_dir'], parameterization=False),
+        name='dsplots')
     dsplots.inputs.container = 'reports'
 
     workflow.connect([
@@ -420,7 +422,7 @@ def individual_reports(settings, name='ReportsWorkflow'):
         if settings.get('fft_spikes_detector', False):
             page_number += 1
         workflow.connect([
-            (inputnode, mplots, [('ica_report', 'in%d'%page_number)])
+            (inputnode, mplots, [('ica_report', 'in%d' % page_number)])
         ])
 
     if not verbose:
@@ -441,8 +443,8 @@ def individual_reports(settings, name='ReportsWorkflow'):
         title='tSNR Mosaic',
         plot_sagittal=False,
         only_noise=False,
-        skip_slices=10,
-        ncols=17,
+        skip_slices=2,
+        ncols=11,
         cmap='plasma'), name='PlotMosaicTSNR')
 
     # Verbose-reporting goes here
