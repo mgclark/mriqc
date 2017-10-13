@@ -87,10 +87,10 @@ class PlotBaseInputSpec(BaseInterfaceInputSpec):
 class PlotMosaicInputSpec(PlotBaseInputSpec):
     bbox_mask_file = File(exists=True, desc='brain mask')
     only_noise = traits.Bool(False, desc='plot only noise')
-    plot_sagittal = traits.Bool(
-        True, usedefault=True, desc='include sagittal slices')
-    skip_slices = traits.Int(
-        2, usedefault=True, desc='number of slices to skip; default 2')
+    plot_sagittal = traits.Bool(True, usedefault=True,
+                                desc='include sagittal slices')
+    skip_slices = traits.Int(2, usedefault=True,
+                             desc='number of slices to skip; default 2')
     ncols = traits.Int(8, usedefault=True, desc='number of image columns')
 
 

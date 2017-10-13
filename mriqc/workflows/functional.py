@@ -141,6 +141,7 @@ def fmri_qc_workflow(dataset, settings, name='funcMRIQC'):
         (reorient_and_discard, repwf, [('out_file', 'inputnode.in_ras')]),
         (mean, repwf, [('out_file', 'inputnode.epi_mean')]),
         (tsnr, repwf, [('stddev_file', 'inputnode.in_stddev')]),
+        (tsnr, repwf, [('stddev_file', 'inputnode.in_tsnr')]),
         (skullstrip_epi, repwf, [('outputnode.out_file', 'inputnode.brainmask')]),
         (hmcwf, repwf, [('outputnode.out_fd', 'inputnode.hmc_fd'),
                         ('outputnode.out_file', 'inputnode.hmc_epi')]),
@@ -302,7 +303,6 @@ def compute_iqms(settings, name='ComputeIQMs'):
             (spikes_fft, datasink, [('n_spikes', 'spikes_num')])
         ])
 
-
     return workflow
 
 
@@ -325,23 +325,26 @@ def individual_reports(settings, name='ReportsWorkflow'):
     pages = 5
     extra_pages = 0
     if verbose:
-        extra_pages = 4
+        extra_pages = 5
 
     workflow = pe.Workflow(name=name)
     inputnode = pe.Node(niu.IdentityInterface(fields=[
-        'in_iqms', 'in_ras', 'hmc_epi', 'epi_mean', 'brainmask', 'hmc_fd', 'fd_thres', 'epi_parc',
-        'in_dvars', 'in_stddev', 'outliers', 'in_spikes', 'in_fft',
-        'mni_report', 'ica_report']),
+        'in_iqms', 'in_ras', 'hmc_epi', 'epi_mean', 'brainmask', 'hmc_fd',
+        'fd_thres', 'epi_parc', 'in_dvars', 'in_stddev', 'outliers',
+        'in_spikes', 'in_fft', 'mni_report', 'ica_report', 'in_tsnr']),
         name='inputnode')
 
     # Set FD threshold
     inputnode.inputs.fd_thres = settings.get('fd_thres', 0.2)
 
     spmask = pe.Node(niu.Function(
-        input_names=['in_file', 'in_mask'], output_names=['out_file', 'out_plot'],
-        function=spikes_mask), name='SpikesMask', mem_gb=biggest_file_gb * 3.5)
+        input_names=['in_file', 'in_mask'],
+        output_names=['out_file', 'out_plot'],
+        function=spikes_mask), name='SpikesMask',
+        mem_gb=biggest_file_gb * 3.5)
 
-    spikes_bg = pe.Node(Spikes(no_zscore=True, detrend=False), name='SpikesFinderBgMask',
+    spikes_bg = pe.Node(Spikes(no_zscore=True, detrend=False),
+                        name='SpikesFinderBgMask',
                         mem_gb=biggest_file_gb * 2.5)
 
     bigplot = pe.Node(niu.Function(
@@ -363,7 +366,6 @@ def individual_reports(settings, name='ReportsWorkflow'):
         (spikes_bg, bigplot, [('out_tsz', 'in_spikes_bg')]),
         (spmask, spikes_bg, [('out_file', 'in_mask')]),
     ])
-
 
     mosaic_mean = pe.Node(PlotMosaic(
         out_file='plot_func_mean_mosaic1.svg',
@@ -434,6 +436,15 @@ def individual_reports(settings, name='ReportsWorkflow'):
         title='Enhanced noise in EPI mean',
         only_noise=True, cmap='viridis_r'), name='PlotMosaicNoise')
 
+    mosaic_tsnr = pe.Node(PlotMosaic(
+        out_file='plot_anat_mosaic3_tsnr.svg',
+        title='tSNR Mosaic',
+        plot_sagittal=False,
+        only_noise=False,
+        skip_slices=10,
+        ncols=17,
+        cmap='plasma'), name='PlotMosaicTSNR')
+
     # Verbose-reporting goes here
     from ..interfaces.viz import PlotContours
     from ..viz.utils import plot_bg_dist
@@ -448,10 +459,12 @@ def individual_reports(settings, name='ReportsWorkflow'):
         (inputnode, mosaic_zoom, [('epi_mean', 'in_file'),
                                   ('brainmask', 'bbox_mask_file')]),
         (inputnode, mosaic_noise, [('epi_mean', 'in_file')]),
+        (inputnode, mosaic_tsnr, [('in_tsnr', 'in_file')]),
         (mosaic_zoom, mplots, [('out_file', 'in%d' % (pages + 1))]),
         (mosaic_noise, mplots, [('out_file', 'in%d' % (pages + 2))]),
-        (plot_bmask, mplots, [('out_file', 'in%d' % (pages + 3))]),
-        (inputnode, mplots, [('mni_report', 'in%d' % (pages + 4))]),
+        (mosaic_tsnr, mplots, [('out_file', 'in%d' % (pages + 3))]),
+        (plot_bmask, mplots, [('out_file', 'in%d' % (pages + 4))]),
+        (inputnode, mplots, [('mni_report', 'in%d' % (pages + 5))]),
     ])
     return workflow
 
